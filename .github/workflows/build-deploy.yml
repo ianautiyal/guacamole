@@ -54,7 +54,7 @@ jobs:
       - name: Deploy Server to Docker Hub
         uses: docker/build-push-action@v6
         with:
-          context: .
+          context: ./guacamole-server
           build-args: LABEL=https://github.com/${{ secrets.DOCKER_REPOSITORY_USERNAME }}/${{ github.event.repository.name }}-server
           platforms: linux/arm64
           push: true
@@ -75,7 +75,7 @@ jobs:
       - name: Deploy Server to Docker Hub
         uses: docker/build-push-action@v6
         with:
-          context: .
+          context: ./guacamole-client
           build-args: LABEL=https://github.com/${{ secrets.DOCKER_REPOSITORY_USERNAME }}/${{ github.event.repository.name }}-client
           platforms: linux/arm64
           push: true
