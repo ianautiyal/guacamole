@@ -15,8 +15,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout Guacamole Server
         uses: actions/checkout@v4
+        with:
+          repository: apache/guacamole-server
+          path: guacamole-server
+
+      - name: Checkout Guacamole Client
+        uses: actions/checkout@v4
+        with:
+          repository: apache/guacamole-client
+          path: guacamole-client
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -31,8 +40,8 @@ jobs:
           username: ${{ secrets.DOCKER_REPOSITORY_USERNAME }}
           password: ${{ secrets.DOCKER_REPOSITORY_TOKEN }}
 
-      - name: Docker meta for server
-        id: meta-server
+      - name: Docker meta for guacamole server
+        id: server-meta
         uses: docker/metadata-action@v5
         with:
           images: ghcr.io/${{ secrets.DOCKER_REPOSITORY_USERNAME }}/${{ github.event.repository.name }}-server
@@ -43,18 +52,17 @@ jobs:
             type=semver,pattern={{major}}
 
       - name: Deploy Server to Docker Hub
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: .
-          target: server
-          build-args: LABEL=https://github.com/${{ secrets.DOCKER_REPOSITORY_USERNAME }}/${{ github.event.repository.name }}
-          platforms: linux/amd64,linux/arm64
+          build-args: LABEL=https://github.com/${{ secrets.DOCKER_REPOSITORY_USERNAME }}/${{ github.event.repository.name }}-server
+          platforms: linux/arm64
           push: true
-          tags: ${{ steps.meta-server.outputs.tags }}
-          labels: ${{ steps.meta-server.outputs.labels }}
+          tags: ${{ steps.server-meta.outputs.tags }}
+          labels: ${{ steps.server-meta.outputs.labels }}
 
-      - name: Docker meta for client
-        id: meta-client
+      - name: Docker meta for guacamole client
+        id: client-meta
         uses: docker/metadata-action@v5
         with:
           images: ghcr.io/${{ secrets.DOCKER_REPOSITORY_USERNAME }}/${{ github.event.repository.name }}-client
@@ -64,16 +72,15 @@ jobs:
             type=semver,pattern={{major}}.{{minor}}
             type=semver,pattern={{major}}
 
-      - name: Deploy client to Docker Hub
-        uses: docker/build-push-action@v5
+      - name: Deploy Server to Docker Hub
+        uses: docker/build-push-action@v6
         with:
           context: .
-          target: client
-          build-args: LABEL=https://github.com/${{ secrets.DOCKER_REPOSITORY_USERNAME }}/${{ github.event.repository.name }}
-          platforms: linux/amd64,linux/arm64
+          build-args: LABEL=https://github.com/${{ secrets.DOCKER_REPOSITORY_USERNAME }}/${{ github.event.repository.name }}-client
+          platforms: linux/arm64
           push: true
-          tags: ${{ steps.meta-client.outputs.tags }}
-          labels: ${{ steps.meta-client.outputs.labels }}
+          tags: ${{ steps.client-meta.outputs.tags }}
+          labels: ${{ steps.client-meta.outputs.labels }}
 
       - name: Logout from Docker Hub
         run: docker logout
