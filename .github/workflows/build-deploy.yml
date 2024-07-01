@@ -24,7 +24,6 @@ jobs:
       - name: Checkout Guacamole Client
         uses: actions/checkout@v4
         with:
-          repository: apache/guacamole-client
           path: guacamole-client
 
       - name: Set up QEMU
@@ -55,7 +54,6 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: ./guacamole-server
-          build-args: LABEL=https://github.com/${{ secrets.DOCKER_REPOSITORY_USERNAME }}/${{ github.event.repository.name }}-server
           platforms: linux/arm64
           push: true
           tags: ${{ steps.server-meta.outputs.tags }}
@@ -76,7 +74,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: ./guacamole-client
-          build-args: LABEL=https://github.com/${{ secrets.DOCKER_REPOSITORY_USERNAME }}/${{ github.event.repository.name }}-client
+          build-args: GUACAMOLE_VERSION=1.5.5 WEBAPP_CONTEXT=ROOT
           platforms: linux/arm64
           push: true
           tags: ${{ steps.client-meta.outputs.tags }}
