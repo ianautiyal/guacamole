@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<user-mapping>
+    <authorize username="ajay" password="b9d33c2d88b048ca38b084f3ef625b99" encoding="md5">
+        <connection name="k8s-master-01">
+            <protocol>rdp</protocol>
+            <param name="hostname">10.10.10.100</param>
+            <param name="port">3389</param>
+            <param name="username">ajay</param>
+            <param name="password">doon</param>
+            <param name="security">any</param>
+            <param name="ignore-cert">true</param>
+            <param name="wol-send-packet">true</param>
+            <param name="wol-mac-addr">18:66:da:03:4f:d7</param>
+        </connection>
+    </authorize>
+</user-mapping>
